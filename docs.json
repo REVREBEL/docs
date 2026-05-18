@@ -9,69 +9,6 @@
   },
   "favicon": "/favicon.svg",
   "navigation": {
-    "tabs": [
-      {
-        "tab": "Guides",
-        "groups": [
-          {
-            "group": "Getting started",
-            "pages": [
-              "index",
-              "quickstart",
-              "development"
-            ]
-          },
-          {
-            "group": "Customization",
-            "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/components",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "Agent ready",
-            "pages": [
-              "agent-ready/prompt",
-              "agent-ready/visibility",
-              "agent-ready/contextual",
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API reference",
-        "groups": [
-          {
-            "group": "API documentation",
-            "pages": [
-              "api-reference/introduction"
-            ]
-          },
-          {
-            "group": "Endpoint examples",
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
-            ]
-          }
-        ]
-      }
-    ],
     "global": {
       "anchors": [
         {
@@ -85,7 +22,119 @@
           "icon": "newspaper"
         }
       ]
-    }
+    },
+    "products": [
+      {
+        "product": "Metrics",
+        "tabs": [
+          {
+            "tab": "Guides",
+            "groups": [
+              {
+                "group": "Getting started",
+                "pages": [
+                  "index",
+                  "quickstart",
+                  "development"
+                ]
+              },
+              {
+                "group": "Customization",
+                "pages": [
+                  "essentials/settings",
+                  "essentials/navigation"
+                ]
+              },
+              {
+                "group": "Writing content",
+                "pages": [
+                  "essentials/markdown",
+                  "essentials/code",
+                  "essentials/images",
+                  "essentials/components",
+                  "essentials/reusable-snippets"
+                ]
+              },
+              {
+                "group": "Agent ready",
+                "pages": [
+                  "agent-ready/prompt",
+                  "agent-ready/visibility",
+                  "agent-ready/contextual",
+                  "ai-tools/cursor",
+                  "ai-tools/claude-code",
+                  "ai-tools/windsurf"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "API reference",
+            "groups": [
+              {
+                "group": "API documentation",
+                "pages": [
+                  "api-reference/introduction"
+                ]
+              },
+              {
+                "group": "Endpoint examples",
+                "pages": [
+                  "api-reference/endpoint/get",
+                  "api-reference/endpoint/create",
+                  "api-reference/endpoint/delete",
+                  "api-reference/endpoint/webhook"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Metrics Library",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": [
+                  "metrics-library/index.mdx"
+                ]
+              },
+              {
+                "group": "Standards",
+                "pages": [
+                  "metrics-library/column-naming-standards.mdx",
+                  "metrics-library/table-prefix-standards.mdx",
+                  "metrics-library/table-architecture.mdx"
+                ]
+              },
+              {
+                "group": "Table Models",
+                "pages": [
+                  "metrics-library/costar-processing-spec.mdx",
+                  "metrics-library/costar-processing-guide.mdx",
+                  "metrics-library/forecast-budget-pricing.mdx",
+                  "metrics-library/events-table-model.mdx",
+                  "metrics-library/demand-table-models.mdx",
+                  "metrics-library/source-file-ingestion.mdx"
+                ]
+              },
+              {
+                "group": "Dimensional Models",
+                "pages": [
+                  "metrics-library/roomtype-model.mdx",
+                  "metrics-library/segment-model.mdx",
+                  "metrics-library/source-channel-rate-model.mdx"
+                ]
+              },
+              {
+                "group": "Audits",
+                "pages": [
+                  "metrics-library/column-propagation-audit.mdx"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   "logo": {
     "light": "/logo/light.svg",

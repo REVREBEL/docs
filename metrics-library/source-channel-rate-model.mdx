@@ -1,0 +1,186 @@
+---
+title: "Source, Channel & Rate Model"
+description: "Source, channel, agency, company, consortia, and rate data modeling for the Metrics Platform"
+---
+
+# Source, Channel, and Rate Model
+
+Source, channel, agency, company, consortia, and rate data sit at the messy intersection of distribution, sales, marketing, revenue strategy, and finance. Every hotel system has its own version of the truth. Sometimes it is a source. Sometimes it is a subsource. Sometimes it is a channel. Sometimes it is a rate code wearing a trench coat.
+
+The Metrics model separates these concepts into controlled lookup tables, then uses mapping tables to translate source-system values into the standard structure.
+
+---
+
+## How We View Source and Rate Data
+
+Source and channel data explain how demand enters the hotel. Rate and company data explain why the booking exists, how it should be priced, and how it should roll into commercial and finance reporting.
+
+Metrics keeps those relationships explicit so reporting can answer the practical questions: Where did the booking come from? What commercial bucket does it belong to? Which rate structure drove it? Which company or agency influenced it?
+
+---
+
+## Table Family
+
+| Table | Purpose |
+| --- | --- |
+| `lkp_consortia_category` | Controlled list of consortia categories. |
+| `lkp_consortia_focus` | Controlled list of consortia focus areas. |
+| `lkp_consortia` | Controlled consortia reference table. |
+| `lkp_agency` | Agency and IATA reference table. |
+| `lkp_industry` | Controlled industry category and industry table. |
+| `lkp_company` | Company, corporate account, and profile reference table. |
+| `lkp_source` | Controlled list of standard sources. |
+| `lkp_subsource` | Controlled list of standard subsources. |
+| `lkp_channel_group` | Controlled list of high-level channel groups. |
+| `lkp_channel` | Controlled list of standard channels. |
+| `lkp_ratetype` | Controlled list of rate types. |
+| `lkp_rate` | Controlled list of standard rates and rate attributes. |
+| `map_source` | Source-system source/subsource mapping table. |
+| `map_rate` | Source-system rate mapping table. |
+| `vw_source` | Enriched source/subsource/channel view for reporting. |
+| `vw_rate` | Enriched rate view for reporting. |
+
+---
+
+## Source and Channel Lookup Tables
+
+### `lkp_source`
+
+| Column | Type | Definition |
+| --- | --- | --- |
+| `code` | STRING | Standard source code. |
+| `name` | STRING | Source display name. |
+| `description` | STRING | Definition or usage notes. |
+| `sort` | INT64 | Display order for reporting. |
+| `source` | STRING | Optional source family or legacy source label. |
+| `is_active` | BOOL | Indicates whether the source value is active. |
+
+### `lkp_channel`
+
+| Column | Type | Definition |
+| --- | --- | --- |
+| `code` | STRING | Standard channel code. |
+| `name` | STRING | Channel display name. |
+| `description` | STRING | Definition or usage notes. |
+| `sort` | INT64 | Display order for reporting. |
+| `channel_group_code` | STRING | Standard channel group code. |
+| `is_active` | BOOL | Indicates whether the channel value is active. |
+
+---
+
+## Rate Lookup Tables
+
+### `lkp_rate`
+
+| Column | Type | Definition |
+| --- | --- | --- |
+| `code` | STRING | Standard rate code. |
+| `name` | STRING | Rate display name. |
+| `description` | STRING | Rate description or usage notes. |
+| `ratetype_code` | STRING | Standard rate type code. |
+| `company_code` | STRING | Standard company code, when rate is associated with a company. |
+| `segment_code` | STRING | Standard segment code. |
+| `channel_code` | STRING | Standard channel code. |
+| `source_code` | STRING | Standard source code. |
+| `subsource_code` | STRING | Standard subsource code, when applicable. |
+| `consortia_code` | STRING | Standard consortia code, when applicable. |
+| `is_active` | BOOL | Indicates whether the rate value is active. |
+
+---
+
+## `map_source`
+
+`map_source` is the source-to-standard translation table for source and subsource values.
+
+### Why `code_reference` Exists
+
+`code_reference` tells the pipeline what the incoming source-system `code` represents:
+
+| code\_reference | Meaning |
+| --- | --- |
+| `source_code` | The source-system code maps to the standard `source_code`. |
+| `subsource_code` | The source-system code maps to the standard `subsource_code`. |
+
+<Note>
+  When a system does not provide a true subsource, the target fact or snapshot table should populate `subsource_code = source_code` to keep the model structurally consistent.
+</Note>
+
+### Grain
+
+```text
+property_code + system + code
+```
+
+### Columns
+
+| Column | Type | Definition |
+| --- | --- | --- |
+| `property_code` | STRING | Property code. |
+| `system` | STRING | Source system providing the source/subsource value. |
+| `code` | STRING | Source-system source or subsource code. |
+| `name` | STRING | Source-system source or subsource name. |
+| `code_reference` | STRING | Indicates whether `code` maps to `source_code` or `subsource_code`. |
+| `source_code` | STRING | Standard source code. |
+| `subsource_code` | STRING | Standard subsource code. |
+| `channel_code` | STRING | Standard channel code. |
+| `is_active` | BOOL | Indicates whether the mapping is active. |
+
+---
+
+## `map_rate`
+
+Rate mapping connects the source-system rate code to rate type, company, segment, channel, source, subsource, and consortia context.
+
+### Grain
+
+```text
+property_code + system + code
+```
+
+### Columns
+
+| Column | Type | Definition |
+| --- | --- | --- |
+| `property_code` | STRING | Property code. |
+| `system` | STRING | Source system providing the rate value. |
+| `code` | STRING | Source-system rate code. |
+| `name` | STRING | Source-system rate name. |
+| `ratetype_code` | STRING | Standard rate type code. |
+| `company_code` | STRING | Standard company code. |
+| `segment_code` | STRING | Standard segment code. |
+| `channel_code` | STRING | Standard channel code. |
+| `source_code` | STRING | Standard source code. |
+| `subsource_code` | STRING | Standard subsource code, when applicable. |
+| `consortia_code` | STRING | Standard consortia code, when applicable. |
+| `is_active` | BOOL | Indicates whether the mapping is active. |
+
+---
+
+## Source Resolution Example
+
+```text
+source file source/subsource code
+  → map_source.code + map_source.code_reference
+  → source_code / subsource_code / channel_code
+  → target table source_code, subsource_code, channel_code
+```
+
+## Rate Resolution Example
+
+```text
+source file rate code
+  → map_rate.code
+  → ratetype_code / company_code / segment_code / channel_code / source_code / consortia_code
+  → target table rate and commercial attributes
+```
+
+---
+
+## Operating Notes
+
+1. Use `lkp_`, not `lpk_`, for lookup tables.
+2. Mapping tables are universal by `property_code + system + code`; they do not include report-level grain.
+3. Source reports belong in ingestion metadata, not source or rate mapping tables.
+4. `code_reference` is required in `map_source` because some systems map source and subsource differently.
+5. When no subsource exists, target fact/snapshot tables may set `subsource_code = source_code`.
+6. Keep agency, company, consortia, source, channel, and rate separate. They answer different questions.

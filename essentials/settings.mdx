@@ -34,12 +34,6 @@ Set the name, theme, and visual identity of your site.
   Path to your favicon. SVG recommended for crisp rendering at all sizes.
 </ResponseField>
 
-<ResponseField name="logo" type="object">
-  <Expandable title="Logo">
-      
-  </Expandable>
-</ResponseField>
-
 ## Colors
 
 ```json docs.json highlight={5}
@@ -67,10 +61,6 @@ Set the name, theme, and visual identity of your site.
 
 <ResponseField name="colors.background" type="object">
   Override the default page background color.
-
-  <Expandable title="Background">
-     
-  </Expandable>
 </ResponseField>
 
 ## Navbar
@@ -94,10 +84,6 @@ Configure the top navigation bar links and primary call-to-action.
 
 <ResponseField name="navbar.links" type="array">
   Text links displayed in the top navigation bar.
-
-  <Expandable title="Link">
-     
-  </Expandable>
 </ResponseField>
 
 <ResponseField name="navbar.primary" type="object">
@@ -107,8 +93,6 @@ Configure the top navigation bar links and primary call-to-action.
     <ResponseField name="type" type='"button" | "github"'>
       `button` renders a CTA button. `github` renders a star count badge.
     </ResponseField>
-
-     
   </Expandable>
 </ResponseField>
 

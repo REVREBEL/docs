@@ -1,0 +1,171 @@
+---
+title: "Segment Model"
+description: "Standardized segment modeling framework for commercial and finance reporting"
+---
+
+# Segment Model
+
+Segment data is one of the first places hotel reporting starts to drift. PMS, CRS, RMS, finance, and BI tools all use segment logic, but they rarely agree on names, grouping, codes, or ledger treatment.
+
+The Metrics segment model separates source-system segment values from the standardized commercial and finance structure. Source values are mapped once, then published into a production segment dimension that can be used consistently by pace, actuals, forecast, budget, pickup, and finance reporting.
+
+---
+
+## How We View Segment Data
+
+Segment is both a commercial lens and a financial reporting bridge.
+
+Commercial teams need segment logic to understand demand behavior, booking mix, pricing strategy, and pace. Finance needs segment logic to align production to ledger treatment, budget structure, and reporting rollups.
+
+The model keeps segment group, segment, and finance segment as separate controlled structures.
+
+---
+
+## Table Family
+
+| Table | Purpose |
+| --- | --- |
+| `lkp_segment_group` | Controlled list of high-level commercial segment groups. |
+| `lkp_segment` | Controlled list of standard commercial segments. Each segment belongs to a segment group. |
+| `lkp_finance_segment` | Controlled list of finance reporting segments. |
+| `map_segment` | Source-to-standard mapping table used to classify source-system segment values. |
+| `dim_segment` | Production segment reference used by ingestion, facts, snapshots, and reporting. |
+| `vw_segment` | Enriched view that joins the dimension to segment, group, and finance labels. |
+
+---
+
+## `lkp_segment_group`
+
+### Example Values
+
+| code | name | description | sort |
+| --- | --- | --- | --: |
+| `TRANSIENT` | Transient | Individual transient demand not contracted as group or long-term business. | 10 |
+| `GROUP` | Group | Group blocks, meetings, events, and contracted group production. | 20 |
+| `CONTRACT` | Contract | Contracted or negotiated long-term production. | 30 |
+| `OTHER` | Other | Production that does not fit the primary commercial groups. | 90 |
+
+---
+
+## `lkp_segment`
+
+Each segment belongs to a segment group through `segment_group_code`.
+
+### Example Values
+
+| code | name | description | sort | segment\_group\_code |
+| --- | --- | --- | --: | --- |
+| `BAR` | BAR / Retail | Best available or retail transient production. | 10 | `TRANSIENT` |
+| `DISCOUNT` | Discount | Discounted transient production. | 20 | `TRANSIENT` |
+| `NEGOTIATED` | Negotiated | Negotiated transient or corporate production. | 30 | `TRANSIENT` |
+| `GROUP` | Group | Standard group production. | 10 | `GROUP` |
+| `WHOLESALE` | Wholesale | Wholesale, tour, or net-rated production. | 40 | `CONTRACT` |
+
+---
+
+## `lkp_finance_segment`
+
+Finance segment is intentionally separate from commercial segment. When they do not align, pretending they are the same creates reporting debt. And reporting debt always collects interest.
+
+### Example Values
+
+| code | name | description | sort |
+| --- | --- | --- | --: |
+| `TRANSIENT` | Transient | Finance transient segment rollup. | 10 |
+| `GROUP` | Group | Finance group segment rollup. | 20 |
+| `CONTRACT` | Contract | Finance contract segment rollup. | 30 |
+| `OTHER` | Other | Other finance segment rollup. | 90 |
+
+---
+
+## `map_segment`
+
+`map_segment` is the source-to-standard translation layer.
+
+### Grain
+
+```text
+property_code + system + code
+```
+
+### Columns
+
+| Column | Type | Definition |
+| --- | --- | --- |
+| `property_code` | STRING | Property code. |
+| `system` | STRING | Source system providing the segment value. |
+| `code` | STRING | Source-system segment code. |
+| `name` | STRING | Source-system segment name or label. |
+| `segment_code` | STRING | Standard commercial segment code. |
+| `finance_segment_code` | STRING | Standard finance segment code. |
+| `gl_code` | STRING | General ledger or guest ledger code associated with the mapped segment. |
+| `is_active` | BOOL | Indicates whether the mapping is active. |
+
+---
+
+## `dim_segment`
+
+`dim_segment` is the production segment reference table generated from `map_segment`.
+
+### Processing Logic
+
+```sql
+LEFT JOIN metrics_core.dim_segment s
+  ON incoming.property_code = s.property_code
+ AND incoming.segment_code = s.map_segment_code
+```
+
+### Columns
+
+| Column | Type | Definition |
+| --- | --- | --- |
+| `property_code` | STRING | Property code. |
+| `map_segment_code` | STRING | Source segment code from `map_segment.code`. |
+| `segment_code` | STRING | Standard commercial segment code. |
+| `segment_group_code` | STRING | Standard segment group code. |
+| `finance_segment_code` | STRING | Standard finance segment code. |
+| `gl_code` | STRING | General ledger or guest ledger code. |
+| `is_active` | BOOL | Active indicator. |
+
+### Build Logic
+
+```sql
+SELECT
+  m.property_code,
+  m.code AS map_segment_code,
+  m.segment_code,
+  sg.code AS segment_group_code,
+  m.finance_segment_code,
+  m.gl_code,
+  m.is_active
+FROM metrics_core.map_segment m
+LEFT JOIN metrics_core.lkp_segment s ON m.segment_code = s.code
+LEFT JOIN metrics_core.lkp_segment_group sg ON s.segment_group_code = sg.code
+```
+
+---
+
+## `vw_segment`
+
+`vw_segment` joins the production dimension to lookup labels and descriptions. This is the version reporting, QA, and exports should use when users need readable segment names.
+
+| Column | Source | Definition |
+| --- | --- | --- |
+| `segment_code` | `dim_segment` | Standard commercial segment code. |
+| `segment` | `lkp_segment.name` | Standard commercial segment name. |
+| `segment_group_code` | `dim_segment` | Standard segment group code. |
+| `segment_group` | `lkp_segment_group.name` | Standard segment group name. |
+| `finance_segment_code` | `dim_segment` | Standard finance segment code. |
+| `finance_segment` | `lkp_finance_segment.name` | Finance segment name. |
+| `gl_code` | `dim_segment` | General ledger or guest ledger code. |
+
+---
+
+## Operating Notes
+
+1. `lkp_segment_group`, `lkp_segment`, and `lkp_finance_segment` define controlled values.
+2. `lkp_segment.segment_group_code` controls the commercial segment hierarchy.
+3. `dim_segment` carries `map_segment_code` as the single lookup back to the mapped source segment code.
+4. `dim_segment.segment_group_code` should be inherited from `lkp_segment` unless there is a specific, documented exception.
+5. Finance segment is separate from commercial segment on purpose.
+6. Target metric tables should store `segment_code`; readable names belong in `vw_segment`.

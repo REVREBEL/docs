@@ -1,0 +1,207 @@
+---
+title: "Roomtype Model"
+description: "Standardized roomtype modeling framework for the Metrics Platform"
+---
+
+# Roomtype Model
+
+Roomtype data looks simple until every PMS, RMS, CRS, and booking engine decides to describe the same physical room in a slightly different way. One system sees a room code. Another sees a sellable room name. Another groups rooms into pools. Another adds bed type, class, feature, and category in one free-text label and calls it a day.
+
+The Metrics roomtype model separates those concepts into controlled building blocks. Room category, room class, bed type, and room feature stay independent so they can be reused in different combinations across properties and systems.
+
+---
+
+## How We View Roomtype Data
+
+Roomtype is not just a label. It is a structured commercial object.
+
+The model starts with independent lookup tables, maps source room values into standard attributes, and publishes `dim_roomtype` as the production reference used by ingestion and reporting.
+
+---
+
+## Table Family
+
+| Table | Purpose |
+| --- | --- |
+| `lkp_roomcategory` | Controlled list of broad room categories, such as Room or Suite. |
+| `lkp_roomclass` | Controlled list of commercial room class levels, such as Standard, Upgrade, or Best. |
+| `lkp_bedtype` | Controlled list of bed types, such as King, Queen, or Double. |
+| `lkp_roomfeature` | Controlled list of room features, such as View, Balcony, Accessible, or Fireplace. |
+| `map_roomtype` | Source-to-standard mapping table used to classify source-system roomtype values. |
+| `dim_roomtype` | Production roomtype reference used by ingestion, facts, snapshots, and reporting. |
+| `dim_roompool` | Standard roompool dimension used to group interchangeable or strategically related roomtypes. |
+| `vw_roomtype` | Enriched view that joins the dimension to lookup labels, descriptions, and sort order. |
+| `vw_roompool` | Enriched view that expands roompool groupings into readable roomtype relationships and sort order. |
+
+---
+
+## Lookup Tables
+
+Lookup tables define the controlled vocabulary. They should stay small, stable, and independent.
+
+### Shared Lookup Columns
+
+| Column | Type | Definition |
+| --- | --- | --- |
+| `code` | STRING | Standard lookup code. |
+| `name` | STRING | Display name. |
+| `description` | STRING | Definition or usage notes. |
+| `sort` | INT64 | Display order for reporting. |
+| `is_active` | BOOL | Indicates whether the lookup value is active. |
+| `insert_date` | DATE | Insert date. |
+| `updated_date` | DATE | Updated date. |
+
+### `lkp_roomcategory`
+
+| code | name | description |
+| --- | --- | --- |
+| `ROOM` | Room | Standard hotel room or guestroom product. |
+| `SUITE` | Suite | Larger or separated room product generally sold at a premium. |
+| `VILLA` | Villa | Villa, residence, or standalone accommodation product. |
+| `OTHER` | Other | Used when the product does not fit an existing category. |
+
+### `lkp_roomclass`
+
+| code | name | description |
+| --- | --- | --- |
+| `STD` | Standard | Base or entry room class. |
+| `UPGRADE` | Upgrade | Enhanced room class above base. |
+| `BEST` | Best | Highest commercial room class or premium sellable tier. |
+
+### `lkp_bedtype`
+
+| code | name | description |
+| --- | --- | --- |
+| `KG` | King | King bed configuration. |
+| `QN` | Queen | Queen bed configuration. |
+| `DB` | Double | Double bed configuration. |
+| `TW` | Twin | Twin bed configuration. |
+
+### `lkp_roomfeature`
+
+| code | name | description |
+| --- | --- | --- |
+| `VIEW` | View | Room has a meaningful view premium. |
+| `BALC` | Balcony | Room includes a balcony or terrace. |
+| `ADA` | Accessible | Accessible room configuration. |
+| `FIRE` | Fireplace | Room includes fireplace as a selling feature. |
+| `NONE` | None | No primary feature assigned. |
+
+---
+
+## `map_roomtype`
+
+`map_roomtype` is the source-to-standard translation layer.
+
+### Grain
+
+```text
+property_code + system + code
+```
+
+### Columns
+
+| Column | Type | Definition |
+| --- | --- | --- |
+| `property_code` | STRING | Property code. |
+| `system` | STRING | Source system providing the roomtype value. |
+| `code` | STRING | Source-system roomtype code. |
+| `name` | STRING | Source-system roomtype name or label. |
+| `roomcategory_code` | STRING | Standard room category code. |
+| `roomclass_code` | STRING | Standard room class code. |
+| `bedtype_code` | STRING | Standard bed type code. |
+| `roomfeature_code` | STRING | Standard primary room feature code. |
+| `roompool` | STRING | Optional roompool grouping label. |
+| `roomtype_code` | STRING | Generated standard roomtype code. |
+| `is_active` | BOOL | Indicates whether the mapping is active. |
+
+---
+
+## `dim_roomtype`
+
+`dim_roomtype` is the production roomtype reference table. It is generated from `map_roomtype`.
+
+### Processing Logic
+
+```sql
+LEFT JOIN metrics_core.dim_roomtype rt
+  ON incoming.property_code = rt.property_code
+ AND incoming.roomtype_code = rt.map_roomtype_code
+```
+
+### Code Generation
+
+The standard roomtype code is deterministic:
+
+```sql
+CONCAT(
+  CAST(no_beds AS STRING),
+  bedtype_code,
+  roomclass_code,
+  roomfeature_code,
+  roomcategory_code
+) AS code
+```
+
+### Code Examples
+
+| no\_beds | bedtype\_code | roomclass\_code | roomfeature\_code | roomcategory\_code | Generated code |
+| --: | --- | --- | --- | --- | --- |
+| 1 | `KG` | `STD` | `NONE` | `SUITE` | `1KGSTDNONESUITE` |
+| 2 | `QN` | `UPGRADE` | `NONE` | `ROOM` | `2QNUPGRADENONEROOM` |
+| 1 | `KG` | `BEST` | `VIEW` | `ROOM` | `1KGBESTVIEWROOM` |
+
+### Columns
+
+| Column | Type | Definition |
+| --- | --- | --- |
+| `property_code` | STRING | Property code. |
+| `map_roomtype_code` | STRING | Source roomtype code from `map_roomtype.code`. |
+| `code` | STRING | Standard roomtype code. |
+| `name` | STRING | Standard roomtype display name. |
+| `no_beds` | INT64 | Number of beds represented by the roomtype. |
+| `roomcategory_code` | STRING | Standard room category code. |
+| `roomclass_code` | STRING | Standard room class code. |
+| `bedtype_code` | STRING | Standard bed type code. |
+| `roomfeature_code` | STRING | Standard primary room feature code. |
+| `roompool` | STRING | Optional roompool grouping label. |
+| `available_rms` | INT64 | Room inventory for the roomtype. |
+| `sort` | INT64 | Display order for reporting. |
+| `is_active` | BOOL | Indicates whether the roomtype is active. |
+
+---
+
+## `dim_roompool`
+
+Room pools group related roomtypes that can be treated together for pricing, demand, inventory, or operational analysis.
+
+### Columns
+
+| Column | Type | Definition |
+| --- | --- | --- |
+| `property_code` | STRING | Property code. |
+| `code` | STRING | Standard roompool code. |
+| `name` | STRING | Roompool display name. |
+| `related_roomtypes` | STRING | Comma-separated list of roomtype codes in the pool. |
+| `roompool` | STRING | Source or mapped roompool grouping label. |
+| `sort` | INT64 | Display order for reporting. |
+| `is_active` | BOOL | Indicates whether the roompool is active. |
+
+### Build Logic
+
+```sql
+STRING_AGG(roomtype_code, '' ORDER BY roomtype_code) AS code,
+STRING_AGG(roomtype_code, ',' ORDER BY roomtype_code) AS related_roomtypes
+```
+
+---
+
+## Operating Notes
+
+1. `lkp_` tables define controlled values. They do not know anything about a specific property.
+2. `map_roomtype` translates and governs source-system room values before they are published into the production dimension.
+3. `dim_roomtype` carries `map_roomtype_code` as the single lookup back to the mapped source roomtype code.
+4. `dim_roompool` groups roomtype codes into strategic or interchangeable room pools.
+5. Use `roomcategory_code`, not `roomcategory`, in modeled tables.
+6. Use `no_beds`, not `no_rooms`, when the value means bed count.
+7. Generated codes should be deterministic. Same attributes in, same code out. Always.

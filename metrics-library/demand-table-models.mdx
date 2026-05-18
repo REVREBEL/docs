@@ -1,0 +1,192 @@
+---
+title: "Demand Table Models"
+description: "Demand data table family for market signal, compset benchmarking, and occupancy index analysis"
+---
+
+# Demand Table Models
+
+Demand data has its own table family because it does not behave like PMS actuals, RMS pace, pickup, manual planning, event, or price-shop data. It is a market signal layer. It tells us how the hotel is positioned against the market, not just what the hotel produced.
+
+The demand model supports market demand analysis, occupancy index review, ADR and RevPAR rank tracking, comp-set benchmarking, market-excluding-property comparisons, and demand variance analysis.
+
+---
+
+## How We View Demand Data
+
+We intentionally separate demand data from pace and actual performance datasets because demand behaves differently.
+
+Demand data is observational by nature. It includes market and compset intelligence, occupancy indexing, ADR and RevPAR rankings, prior-period comparisons, and market-level performance metrics.
+
+By structuring demand as its own dataset, we preserve the integrity of operational reporting while creating a cleaner framework for forecasting, benchmarking, and strategic analysis.
+
+---
+
+## Demand Table Family
+
+Demand is stored in three standardized snapshot tables:
+
+```text
+snap_demand_property
+snap_demand_segment
+snap_demand_source
+```
+
+<Note>
+  The source report often named `Demand Channel` maps to `snap_demand_source`. In the REVREBEL model, `source` represents the distribution-oriented view of demand, while `channel` remains available as a standardized grouping when the data supports it.
+</Note>
+
+---
+
+## Naming Standard Notes
+
+| Source Pattern | Standard Pattern | Usage |
+| --- | --- | --- |
+| `snapshot_date` | `snap_date` | Point-in-time date when the demand observation was captured. |
+| `stay_date` or source `date` | `stay_date` | Hotel stay / occupancy / service date. |
+| `room_nights` | `rms` | Room nights or rooms sold. |
+| `compset` | `cs` | Competitive set. |
+| `prior_year` | `ly` | Prior-year comparison. |
+| `prior_week` | `lw` | Prior-week comparison. |
+| `chg` | `chg` | Absolute change / variance. |
+| `pct_chg` | `pct_chg` | Percent change. |
+| `market_excl` | `market_excl` | Market excluding the subject property. |
+| `booking_source` | `source` | Source-oriented distribution cut. |
+| `etl_date` | `etl_date` | Technical ETL timestamp. |
+
+---
+
+## Table List
+
+| Table | Purpose |
+| --- | --- |
+| `snap_demand_property` | Property-level demand, market, compset, index, and rank metrics. |
+| `snap_demand_segment` | Segment-level demand, market, compset, index, rank, and variance metrics. |
+| `snap_demand_source` | Source/channel-level demand, market, compset, index, rank, and variance metrics. |
+
+---
+
+## `snap_demand_property`
+
+### Grain
+
+```text
+property_code + snap_date + stay_date + market_segment + segment
+```
+
+### Standardized Columns
+
+| Source Field | Standard Field | Type | Notes |
+| --- | --- | --- | --- |
+| `market_segment` | `market_segment` | STRING | Market segment from the demand source. |
+| `stay_date`, `date` | `stay_date` | DATE | Stay date for the demand observation. |
+| `compset_rooms_sold` | `cs_rms_sold` | FLOAT64 | Competitive-set rooms sold. |
+| `occ_index` | `occ_index` | FLOAT64 | Property occupancy index versus compset or market. |
+| `occ_rank` | `occ_rank` | STRING | Occupancy rank. |
+| `property_adr` | `adr` | FLOAT64 | Property ADR. |
+| `compset_adr` | `cs_adr` | FLOAT64 | Competitive-set ADR. |
+| `adr_rank` | `adr_rank` | STRING | ADR rank. |
+| `revpar_rank` | `revpar_rank` | STRING | RevPAR rank. |
+| `snapshot_date` | `snap_date` | DATE | Demand snapshot date. |
+| `property_code` | `property_code` | STRING | Property code. |
+
+---
+
+## `snap_demand_segment`
+
+### Grain
+
+```text
+property_code + snap_date + stay_date + market_segment + segment_detail
+```
+
+### Standardized Columns
+
+| Source Field | Standard Field | Type | Notes |
+| --- | --- | --- | --- |
+| `date`, `stay_date` | `stay_date` | DATE | Demand observation date / stay date. |
+| `occ` | `occ` | FLOAT64 | Property occupancy. |
+| `compset_occ` | `cs_occ` | FLOAT64 | Competitive-set occupancy. |
+| `occ_index` | `occ_index` | FLOAT64 | Property occupancy index. |
+| `room_nights_current_my_hotel_totals` | `rms` | INT64 | Current property room nights. |
+| `adr` | `adr` | FLOAT64 | Property ADR. |
+| `revpar` | `revpar` | FLOAT64 | Property RevPAR. |
+| `snapshot_date` | `snap_date` | DATE | Demand snapshot date. |
+
+---
+
+## `snap_demand_source`
+
+### Grain
+
+```text
+property_code + snap_date + stay_date + source
+```
+
+### Standardized Columns
+
+| Source Field | Standard Field | Type | Notes |
+| --- | --- | --- | --- |
+| `booking_source` | `source` | STRING | Booking source from the source table. |
+| `date`, `stay_date` | `stay_date` | DATE | Demand observation date / stay date. |
+| `occ` | `occ` | FLOAT64 | Property occupancy. |
+| `occ_index` | `occ_index` | FLOAT64 | Property occupancy index. |
+| `adr` | `adr` | FLOAT64 | Property ADR. |
+| `revpar` | `revpar` | FLOAT64 | Property RevPAR. |
+| `snapshot_date` | `snap_date` | DATE | Demand snapshot date. |
+
+---
+
+## BigQuery DDL Pattern
+
+```sql
+CREATE TABLE IF NOT EXISTS `PROJECT_ID.metrics_demand.snap_demand_property` (
+  property_code STRING OPTIONS(description="Property code."),
+  snap_date DATE OPTIONS(description="Demand snapshot date."),
+  stay_date DATE OPTIONS(description="Stay date for the demand observation."),
+  month DATE OPTIONS(description="Month value normalized to the first day of month."),
+  market_segment STRING OPTIONS(description="Market segment from the demand source."),
+  segment STRING OPTIONS(description="Standard or source segment value."),
+  cs_no STRING OPTIONS(description="Competitive set number or identifier."),
+  cs_rms_sold FLOAT64 OPTIONS(description="Competitive-set rooms sold."),
+  occ_index FLOAT64 OPTIONS(description="Property occupancy index versus compset or market."),
+  occ_rank STRING OPTIONS(description="Occupancy rank."),
+  adr FLOAT64 OPTIONS(description="Property ADR."),
+  cs_adr FLOAT64 OPTIONS(description="Competitive-set ADR."),
+  adr_rank STRING OPTIONS(description="ADR rank."),
+  revpar_rank STRING OPTIONS(description="RevPAR rank."),
+  insert_date DATE OPTIONS(description="Insert date."),
+  updated_date DATE OPTIONS(description="Updated date.")
+)
+PARTITION BY snap_date
+CLUSTER BY property_code, stay_date
+OPTIONS(description="Property-level demand, compset, index, and rank metrics.");
+```
+
+---
+
+## Relationship to Other Tables
+
+Demand connects to property, event, price, and pace data by:
+
+```text
+property_code + stay_date
+```
+
+BI-facing demand views use the `vw_` prefix:
+
+```text
+vw_demand_property
+vw_demand_segment
+vw_demand_source
+```
+
+---
+
+## Operating Notes
+
+1. Rank fields arrive as strings in some sources and numbers in others. Preserve the source-compatible type in snapshot tables and cast in BI views when values are consistently numeric.
+2. `month` is stored as a DATE using the first day of the month.
+3. `snapshot_date` standardizes to `snap_date`.
+4. `date` or `stay_date` standardizes to `stay_date`.
+5. Demand Channel maps to `snap_demand_source`, not `snap_demand_channel`.
+6. `market_excl` means market excluding the subject property.
