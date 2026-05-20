@@ -4,7 +4,7 @@
   "name": "RERBEL Library",
   "colors": {
     "primary": "#163666",
-    "light": "#eff5f6",
+    "light": "#fafafa",
     "dark": "#163666"
   },
   "favicon": {
@@ -140,8 +140,8 @@
     ]
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light":"/logo/dark.svg",
+    "dark": "/logo/light.svg"
   },
   "navbar": {
     "links": [
@@ -158,15 +158,15 @@
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {
@@ -176,7 +176,7 @@
   },
   "background": {
     "color": {
-      "light": "#eff5f6",
+      "light": "#fafafa",
       "dark": "#163666"
     }
   },
