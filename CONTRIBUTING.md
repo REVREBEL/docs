@@ -1,34 +1,45 @@
-> **Customize this file**: Tailor this template to your project by noting specific contribution types you're looking for, adding a Code of Conduct, or adjusting the writing guidelines to match your style.
+# Contributing to REVREBEL Docs
 
-# Contribute to the documentation
+This repo is the single Mintlify deployment for `docs.revrebel.io`. Pages live as MDX under product subfolders.
 
-Thank you for your interest in contributing to our documentation! This guide will help you get started.
+## Repo layout
 
-## How to contribute
+Each product / source repo gets its own subfolder so synced content stays isolated:
 
-### Option 1: Edit directly on GitHub
+```
+metrics-library/   # synced from REVREBEL/Metrics-Library
+api-reference/     # authored here
+essentials/        # authored here
+agent-ready/       # authored here
+ai-tools/          # authored here
+```
 
-1. Navigate to the page you want to edit
-2. Click the "Edit this file" button (the pencil icon)
-3. Make your changes and submit a pull request
+When onboarding a new product repo, give it its own top-level folder (e.g. `metrics-dataform/`, `brand/`) and a matching tab in `docs.json`.
 
-### Option 2: Local development
+## Editing docs
 
-1. Fork and clone this repository
-2. Install the Mintlify CLI: `npm i -g mint`
-3. Create a branch for your changes
-4. Make changes
-5. Navigate to the docs directory and run `mint dev`
-6. Preview your changes at `http://localhost:3000`
-7. Commit your changes and submit a pull request
+- **Authored-here folders** (`api-reference/`, `essentials/`, `agent-ready/`, `ai-tools/`, root pages): edit directly via PR.
+- **Synced folders** (currently `metrics-library/`): **do not edit MDX directly**. Edit the source Markdown in the upstream repo (`REVREBEL/Metrics-Library/docs/`). A GitHub Action in that repo opens a PR here on every push to `main`.
 
-For more details on local development, see our [development guide](development.mdx).
+If you edit a synced folder by hand, the next sync will overwrite your changes.
 
-## Writing guidelines
+## Adding a new synced product
 
-- **Use active voice**: "Run the command" not "The command should be run"
-- **Address the reader directly**: Use "you" instead of "the user"
-- **Keep sentences concise**: Aim for one idea per sentence
-- **Lead with the goal**: Start instructions with what the user wants to accomplish
-- **Use consistent terminology**: Don't alternate between synonyms for the same concept
-- **Include examples**: Show, don't just tell
+1. Pick a folder name (kebab-case, matches the product).
+2. In the source repo, add a sync workflow modeled on `REVREBEL/Metrics-Library/.github/workflows/sync-docs.yml`. Change `TARGET_DIR` to your new folder.
+3. In `docs.json`, add a new tab under the appropriate product with the page list.
+
+## Local preview
+
+```bash
+mint dev
+```
+
+## Validation
+
+Before opening a PR:
+
+```bash
+mint validate
+mint broken-links
+```
