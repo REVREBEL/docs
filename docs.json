@@ -1,7 +1,8 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "almond",
-  "name": "RERBEL Library",
+  "name": "REVREBEL Library",
+  "description": "REVREBEL's source of truth for hospitality metrics, table models, naming standards, and data architecture.",
   "colors": {
     "primary": "#163666",
     "light": "#fafafa",
@@ -10,6 +11,10 @@
   "favicon": {
     "light": "/favicon-light.svg",
     "dark": "/favicon-dark.svg"
+  },
+  "logo": {
+    "light": "/logo/dark.svg",
+    "dark": "/logo/light.svg"
   },
   "navigation": {
     "global": {
@@ -21,7 +26,7 @@
         },
         {
           "anchor": "Blog",
-          "href": "https://rerebel.io/blog",
+          "href": "https://revrebel.io/blog",
           "icon": "newspaper"
         }
       ]
@@ -97,40 +102,40 @@
               {
                 "group": "Overview",
                 "pages": [
-                  "metrics-library/index.mdx"
+                  "metrics-library/index"
                 ]
               },
               {
                 "group": "Standards",
                 "pages": [
-                  "metrics-library/column-naming-standards.mdx",
-                  "metrics-library/table-prefix-standards.mdx",
-                  "metrics-library/table-architecture.mdx"
+                  "metrics-library/column-naming-standards",
+                  "metrics-library/table-prefix-standards",
+                  "metrics-library/table-architecture"
                 ]
               },
               {
                 "group": "Table Models",
                 "pages": [
-                  "metrics-library/costar-processing-spec.mdx",
-                  "metrics-library/costar-processing-guide.mdx",
-                  "metrics-library/forecast-budget-pricing.mdx",
-                  "metrics-library/events-table-model.mdx",
-                  "metrics-library/demand-table-models.mdx",
-                  "metrics-library/source-file-ingestion.mdx"
+                  "metrics-library/costar-processing-spec",
+                  "metrics-library/costar-processing-guide",
+                  "metrics-library/forecast-budget-pricing",
+                  "metrics-library/events-table-model",
+                  "metrics-library/demand-table-models",
+                  "metrics-library/source-file-ingestion"
                 ]
               },
               {
                 "group": "Dimensional Models",
                 "pages": [
-                  "metrics-library/roomtype-model.mdx",
-                  "metrics-library/segment-model.mdx",
-                  "metrics-library/source-channel-rate-model.mdx"
+                  "metrics-library/roomtype-model",
+                  "metrics-library/segment-model",
+                  "metrics-library/source-channel-rate-model"
                 ]
               },
               {
                 "group": "Audits",
                 "pages": [
-                  "metrics-library/column-propagation-audit.mdx"
+                  "metrics-library/column-propagation-audit"
                 ]
               }
             ]
@@ -138,10 +143,6 @@
         ]
       }
     ]
-  },
-  "logo": {
-    "light":"/logo/dark.svg",
-    "dark": "/logo/light.svg"
   },
   "navbar": {
     "links": [
