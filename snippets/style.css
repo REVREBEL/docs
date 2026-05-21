@@ -132,7 +132,18 @@
 
 html,
 body {
-    background-color: var(--main-bg) !important;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing: subpixel-antialiased;
+  font-size: 100%;
+  /* stylelint-disable-next-line */
+  font-smooth: always;
+  /* stylelint-disable-next-line */
+  font-smoothing: antialiased;
+  font-variant-ligatures: none;
+  text-rendering: optimizelegibility;
+  text-shadow: rgb(0 0 0 / 1%) 0 0 1px;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -143,27 +154,37 @@ body {
     font-weight: 400;
 }
 
+#background-color {
+    background-color: var(--color-red) !important;
+}
+
 main,
 #body-content,
 body-content {
-    background: var(--main-bg) !important;
+    background-color: var(--color-red) !important;
     color: var(--primary) !important;
 }
 
 #sidebar-content,
-#sidebar,
-sidebar {
-    background: var(--sidebar-bg) !important;
+#sidebar {
+    background-color: var(--sidebar-bg) !important;
+}
+
+#content {
+    background-color: var(--color-green) !important;
 }
 
 #navbar {
-    background: var(--background-light) !important;
+    background-color: var(--background-light) !important;
     border-bottom: 2px solid var(--primary) !important;
 }
 
+#content-area {
+    background-color: var(--color-yellow) !important;
+}
+
 #navbar,
-#sidebar-content,
-#content-container {
+#sidebar-content {
     border-radius: 0 !important;
     border-width: 2px;
     border-color: var(--primary) !important;
@@ -177,9 +198,13 @@ sidebar {
 
 */
 
-/* Keep if this is part of your intended Mintlify layout */
+
 #content-container {
-    margin-left: 10rem;
+    border-top-width: 2px;
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 0px;
+    margin-left: 5rem;
 }
 
 /* Remove Mintlify fade overlay */
@@ -768,4 +793,14 @@ svg[class*="dark:text-white"] {
 [data-state="closed"] [data-component-part="code-block-copy-button"] * {
   color: white !important;
   stroke: currentColor !important;
+}
+
+
+.peer.is-not-custom~.peer-\[\.is-not-custom\]\:pb-2 {
+    padding-bottom: 0rem;
+}
+
+.peer.is-not-custom~.peer-\[\.is-not-custom\]\:px-2 {
+    padding-left: 0rem;
+    padding-right: 0rem;
 }
