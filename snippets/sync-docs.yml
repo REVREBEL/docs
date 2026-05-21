@@ -5,8 +5,14 @@
 # against REVREBEL/docs that drops them into a per-repo subfolder.
 #
 # Required secret on the source repo:
-#   DOCS_SYNC_TOKEN  - a fine-grained PAT (or GitHub App token) with
-#                      contents:write + pull-requests:write on REVREBEL/docs.
+#   DOCS_SYNC_TOKEN - a fine-grained PAT or GitHub App token with
+#                     contents:write + pull-requests:write on REVREBEL/docs.
+#
+# Recommended per-repo secret naming convention:
+#   <REPO_NAME>_DOCS_SYNC_TOKEN
+#
+# Example:
+#   METRICS_LIBRARY_DOCS_SYNC_TOKEN
 
 name: Sync docs to REVREBEL/docs
 
@@ -20,6 +26,8 @@ on:
   workflow_dispatch:
 
 env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
   # Subfolder inside REVREBEL/docs that this repo owns.
   # Change per repo: metrics-library, metrics-dataform, brand, etc.
   TARGET_DIR: metrics-library
@@ -32,12 +40,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: source
 
       - name: Checkout docs repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: ${{ env.DOCS_REPO }}
           token: ${{ secrets.DOCS_SYNC_TOKEN }}
@@ -69,7 +77,7 @@ jobs:
           fi
 
       - name: Open PR against ${{ env.DOCS_REPO }}
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           path: docs-repo
           token: ${{ secrets.DOCS_SYNC_TOKEN }}
