@@ -1,13 +1,14 @@
 ---
-title: "Metrics Library"
-description: "REVREBEL's internal business intelligence and analytics platform"
+title: Metrics Library
+layout: home
+nav_order: 1
 ---
 
 # Metrics Library
 
 ## Metrics Platform
 
-Metrics is REVREBEL's internal business intelligence and analytics platform designed to centralize, standardize, and analyze hospitality data across operational systems.
+Metrics is REVREBEL’s internal business intelligence and analytics platform designed to centralize, standardize, and analyze hospitality data across operational systems.
 
 The platform exists because hotel data is rarely clean, consistent, or organized the same way twice.
 
@@ -17,67 +18,48 @@ The objective is not simply consolidating data, the objective is creating a reli
 
 Metrics supports:
 
-- revenue strategy,
-- forecasting,
-- pace analysis,
-- pickup reporting,
-- pricing intelligence,
-- distribution analysis,
-- benchmarking,
-- and operational performance tracking.
+* revenue strategy,
+* forecasting,
+* pace analysis,
+* pickup reporting,
+* pricing intelligence,
+* distribution analysis,
+* benchmarking,
+* and operational performance tracking.
 
 The platform is intentionally structured around how hospitality reporting behaves operationally — including snapshot-based pace reporting, comp-set benchmarking, forecast versioning, event overlays, and multi-source reconciliation workflows.
 
-**Because hospitality reporting is complicated enough already. The infrastructure underneath it shouldn't make it worse.**
+**Because hospitality reporting is complicated enough already. The infrastructure underneath it shouldn’t make it worse.**
 
----
 
-## Documentation Standards
+
+# Documentation Standards
 
 This documentation library defines the canonical standards used throughout the Metrics Platform, including:
 
-- warehouse architecture,
-- naming conventions,
-- table structures,
-- dimensional modeling,
-- benchmark processing,
-- event intelligence,
-- planning frameworks,
-- and semantic reporting standards.
+* warehouse architecture,
+* naming conventions,
+* table structures,
+* dimensional modeling,
+* benchmark processing,
+* event intelligence,
+* planning frameworks,
+* and semantic reporting standards.
 
 These standards exist to preserve:
 
-- reporting consistency,
-- benchmark integrity,
-- operational traceability,
-- and downstream analytical stability across the platform.
+* reporting consistency,
+* benchmark integrity,
+* operational traceability,
+* and downstream analytical stability across the platform.
 
----
 
-## Standards
 
-<CardGroup cols={2}>
-  <Card title="Column Naming Standards" icon="tag" href="/metrics-library/column-naming-standards">
-    Canonical naming system used across the warehouse
-  </Card>
+# Standards
 
-  <Card title="Table Prefix Standards" icon="table" href="/metrics-library/table-prefix-standards">
-    Standardized table prefixes used throughout the warehouse
-  </Card>
+* [Database Column Naming Standards](./column-naming-standards/)
+* [Metrics Table Architecture](./metrics-table-architecture/)
+* [CoStar Processing Standards](./costar-processing-standards/)
+* [Forecast & Pricing Table Models](./forecast-pricing-models/)
+* [Events Table Model](./events-table-model/)
 
-  <Card title="Table Architecture" icon="building" href="/metrics-library/table-architecture">
-    Canonical table structure used throughout the platform
-  </Card>
-
-  <Card title="CoStar Processing Guide" icon="chart-bar" href="/metrics-library/costar-processing-guide">
-    Processing standards for CoStar STAR report benchmarking
-  </Card>
-
-  <Card title="Forecast & Pricing Models" icon="calculator" href="/metrics-library/forecast-budget-pricing">
-    Planning, pricing, and writeback table models
-  </Card>
-
-  <Card title="Events Table Model" icon="calendar" href="/metrics-library/events-table-model">
-    Event modeling framework for the Metrics Platform
-  </Card>
-</CardGroup>
