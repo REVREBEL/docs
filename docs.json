@@ -109,42 +109,42 @@
                 "group": "Standards",
                 "pages": [
                   "metrics-library/column-naming-standards",
-                  "metrics-library/table-prefix-standards",
-                  "metrics-library/table-architecture"
+                  "metrics-library/table_prefix_standards",
+                  "metrics-library/revrebel-bi-table-architecture"
                 ]
               },
               {
                 "group": "Table Models",
                 "pages": [
-                  "metrics-library/forecast-budget-pricing",
+                  "metrics-library/forecast-budget-and-pricing-table-models",
                   "metrics-library/events-table-model",
                   "metrics-library/demand-table-models",
-                  "metrics-library/source-file-ingestion"
+                  "metrics-library/source-file-ingestion-model"
                 ]
               },
               {
                 "group": "CoStar",
                 "pages": [
-                  "metrics-library/CoStar/costar-processing-spec",
-                  "metrics-library/CoStar/costar-processing-guide"
+                  "metrics-library/CoStar/costar_metrics_data_model__processing_specification",
+                  "metrics-library/CoStar/costar_metrics_data_model_processing_guide"
                 ]
               },
               {
                 "group": "Google Analytics",
                 "pages": [
-                  "metrics-library/GoogleAnalytics/audiences.mdx",
-                  "metrics-library/GoogleAnalytics/demographic-details.mdx",
-                  "metrics-library/GoogleAnalytics/ecommerce-purchases.mdx",
-                  "metrics-library/GoogleAnalytics/events.mdx",
-                  "metrics-library/GoogleAnalytics/index.mdx",
-                  "metrics-library/GoogleAnalytics/landing-page.mdx",
-                  "metrics-library/GoogleAnalytics/overview.mdx",
-                  "metrics-library/GoogleAnalytics/pages-and-screens.mdx",
-                  "metrics-library/GoogleAnalytics/promotions.mdx",
-                  "metrics-library/GoogleAnalytics/table-identity.mdx",
-                  "metrics-library/GoogleAnalytics/tech-details.mdx",
-                  "metrics-library/GoogleAnalytics/traffic-acquisition.mdx",
-                  "metrics-library/GoogleAnalytics/user-acquisition.mdx",
+                  "metrics-library/GoogleAnalytics/audiences",
+                  "metrics-library/GoogleAnalytics/demographic-details",
+                  "metrics-library/GoogleAnalytics/ecommerce-purchases",
+                  "metrics-library/GoogleAnalytics/events",
+                  "metrics-library/GoogleAnalytics/index",
+                  "metrics-library/GoogleAnalytics/landing-page",
+                  "metrics-library/GoogleAnalytics/overview",
+                  "metrics-library/GoogleAnalytics/pages-and-screens",
+                  "metrics-library/GoogleAnalytics/promotions",
+                  "metrics-library/GoogleAnalytics/table-identity",
+                  "metrics-library/GoogleAnalytics/tech-details",
+                  "metrics-library/GoogleAnalytics/traffic-acquisition",
+                  "metrics-library/GoogleAnalytics/user-acquisition"
                 ]
               },
               {
@@ -158,7 +158,7 @@
               {
                 "group": "Audits",
                 "pages": [
-                  "metrics-library/column-propagation-audit"
+                  "metrics-library/table-architecture-column-propagation-audit"
                 ]
               }
             ]
