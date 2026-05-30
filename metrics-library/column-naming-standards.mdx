@@ -1,9 +1,5 @@
----
-title: "column-naming-standards.mdx"
-description: "Canonical naming system used across the REVREBEL Metrics Library and analytics warehouse"
----
-
 # Database Column Naming Standards
+
 
 ## Metrics Library & Analytics Warehouse
 
@@ -15,9 +11,9 @@ The warehouse is designed as a durable semantic layer where analysts, systems, a
 
 **Clean naming is not cosmetic, it is operational infrastructure.**
 
----
 
-## Core Naming Standard
+
+# Core Naming Standard
 
 All database columns use lowercase `snake_case`.
 
@@ -36,29 +32,27 @@ The structure prioritizes:
 
 This ordering keeps related metric families grouped together logically and alphabetically across warehouse schemas.
 
----
 
-## Naming Philosophy
 
+# Naming Philosophy
 The warehouse naming system is designed around semantic predictability.
 
 A field name should communicate:
-
 - what the metric represents,
 - how it is used,
 - what reporting context applies,
 - and whether a comparison, ranking, or rolling window exists.
 
-The naming structure intentionally favors consistency over source-system terminology.
+The naming structure intentionally favors consistency over source-system terminology. 
 
 **Hospitality systems rarely agree on naming conventions. The warehouse does.**
 
----
 
-## Core Naming Examples
+
+# Core Naming Examples
 
 | Current Variant | Warehouse Standard | Reason |
-| --- | --- | --- |
+|---|---|---|
 | `rooms_budget` | `rms_bgt` | Metric first using approved abbreviations. |
 | `available_rooms_ly` | `available_rms_ly` | Standardized room inventory naming. |
 | `rev_ly_actual` | `rev_ly` | Comparison context already defines the metric. |
@@ -68,28 +62,29 @@ The naming structure intentionally favors consistency over source-system termino
 | `compset_occ` | `cs_occ` | Standardized competitive-set prefix. |
 | `adr_index_pct_chg_py` | `adr_index_pct_chg_ly` | Warehouse standard uses `ly`. |
 
----
 
-## Standard Formatting Rules
 
-### Lowercase Snake Case
+# Standard Formatting Rules
+
+## Lowercase Snake Case
 
 All fields use:
-
 - lowercase letters
 - underscores
 - numeric suffixes where applicable
 
-<CodeGroup>
+### Preferred
 
-```text Preferred
+```text
 property_code
 arrival_date
 roomtype_code
 revpar_rank
 ```
 
-```text Avoid
+### Avoid
+
+```text
 PropertyCode
 ArrivalDate
 roomTypeCode
@@ -97,16 +92,14 @@ RevPAR_Rank
 segment_code_Map
 ```
 
-</CodeGroup>
 
----
 
-## Approved Metric Abbreviations
+# Approved Metric Abbreviations
 
 The warehouse standard consolidates recurring business concepts into a single approved naming structure.
 
 | Concept | Standard |
-| --- | --- |
+|---|---|
 | Rooms | `rms` |
 | Available Rooms | `available_rms` |
 | Revenue | `rev` |
@@ -127,17 +120,19 @@ The warehouse standard consolidates recurring business concepts into a single ap
 | No Show | `ns` |
 | Reservations | `rsvn` |
 
----
+This standard removes synonym drift across operational systems, vendor exports, reporting tools, and manually built datasets.
 
-## Metric Ordering Logic
 
-### Metric First
+
+# Metric Ordering Logic
+
+## Metric First
 
 Metric names begin with the measure or business entity being described.
 
-<CodeGroup>
+### Preferred
 
-```text Preferred
+```text
 rms_bgt
 rev_bgt
 rms_fct
@@ -147,22 +142,24 @@ rev_act
 rms_pace_stly
 ```
 
-```text Avoid
+### Avoid
+
+```text
 rooms_budget
 rev_budget
 budget_rooms
 actualroomrevenue
 ```
 
-</CodeGroup>
 
-### Comparison & Period Suffixes
+
+## Comparison & Period Suffixes
 
 Reporting context appears after the metric.
 
-<CodeGroup>
+### Preferred
 
-```text Preferred
+```text
 adr_ly
 adr_cy
 adr_stly
@@ -171,41 +168,45 @@ rms_bgt_ly
 rms_pace_stly
 ```
 
-```text Avoid
+### Avoid
+
+```text
 ly_adr
 prior_year_adr
 stly_rms_pace
 ```
 
-</CodeGroup>
+This keeps related metric families grouped together naturally during schema inspection and downstream modeling.
 
----
 
-## Numeric Window Standards
 
-Rolling windows and sequence identifiers always appear last. Numeric windows use three-digit formatting for predictable sorting behavior.
+# Numeric Window Standards
 
-<CodeGroup>
+Rolling windows and sequence identifiers always appear last while numeric windows use three-digit formatting for predictable sorting behavior.
 
-```text Preferred
+### Preferred
+
+```text
 rev_chg_ly_030
 rms_chg_ly_030
 adr_chg_ly_030
 revpar_pct_chg_ly_090
 ```
 
-```text Avoid
+### Avoid
+
+```text
 rev_chg_30_day_ly
 rev_30_day_chg_ly
 ```
 
-</CodeGroup>
 
----
 
-## Competitive Set Standards
+# Competitive Set Standards
 
 Competitive-set metrics use the `cs_` prefix.
+
+### Standard
 
 ```text
 cs_adr
@@ -216,14 +217,16 @@ cs_rms
 cs_adr_yoy
 ```
 
----
+The warehouse standard treats competitive benchmarking as a first-class reporting layer, not an exception case.
 
-## Revenue Naming Standards
+
+
+# Revenue Naming Standards
 
 Revenue defaults to room revenue unless another revenue category is explicitly prefixed.
 
 | Revenue Type | Standard |
-| --- | --- |
+|---|---|
 | Room Revenue | `rev` |
 | Food & Beverage Revenue | `fb_rev` |
 | Other Revenue | `other_rev` |
@@ -231,14 +234,22 @@ Revenue defaults to room revenue unless another revenue category is explicitly p
 | Cancellation Revenue | `cx_rev` |
 | Total Revenue | `total_rev` |
 
----
+This keeps operational reporting concise while preserving semantic clarity for non-room revenue categories.
 
-## Date Naming Standards
+
+
+# Date Naming Standards
 
 Date fields describe business meaning rather than storage type.
 
+The warehouse standard daily grain field is:
+
+```text
+date
+```
+
 | Concept | Standard |
-| --- | --- |
+|---|---|
 | Daily Reporting Grain | `date` |
 | Booking Date | `book_date` |
 | Arrival Date | `arrival_date` |
@@ -247,12 +258,16 @@ Date fields describe business meaning rather than storage type.
 | Updated Date | `updated_date` |
 | Snapshot Date | `snap_date` |
 
+The goal is immediate interpretability during reporting, transformation, and operational analysis.
+
 ---
 
-## Identifier Standards
+# Identifier Standards
+
+The warehouse uses standardized identifiers across all operational systems.
 
 | Concept | Standard |
-| --- | --- |
+|---|---|
 | Universal Reservation Identifier | `source_id` |
 | Property Identifier | `property_code` |
 | STR / CoStar Identifier | `str_id` |
@@ -261,12 +276,16 @@ Date fields describe business meaning rather than storage type.
 | Segment Code | `segment_code` |
 | Source Code | `source_code` |
 
----
+This structure normalizes identifier inconsistencies across PMS, CRS, booking engine, OTA, and third-party exports.
 
-## Name & Code Pair Standards
+
+
+# Name & Code Pair Standards
+
+Where a business concept contains both a readable label and a system identifier, the distinction remains explicit.
 
 | Concept | Name Field | Code Field |
-| --- | --- | --- |
+|---|---|---|
 | Rate | `rate` | `rate_code` |
 | Source | `source` | `source_code` |
 | Channel | `channel` | `channel_code` |
@@ -276,7 +295,9 @@ Date fields describe business meaning rather than storage type.
 
 ---
 
-## Source Mapping Standards
+# Source Mapping Standards
+
+Standardized warehouse values may preserve source-system references when traceability or reconciliation is required.
 
 Mapping fields use:
 
@@ -296,12 +317,14 @@ source_map
 source_code_map
 ```
 
+The warehouse prioritizes standardized operational reporting while preserving source-level traceability where necessary.
+
 ---
 
-## Core Metric Dictionary
+# Core Metric Dictionary
 
 | Standard | Definition |
-| --- | --- |
+|---|---|
 | `rms` | Room count / room production metric |
 | `available_rms` | Available room inventory |
 | `rev` | Room revenue |
@@ -326,11 +349,11 @@ source_code_map
 | `nts` | Nights |
 | `rsvn` | Reservations |
 
----
 
-## Pattern Library
 
-### Budget / Forecast / Actual
+# Pattern Library
+
+## Budget / Forecast / Actual
 
 ```text
 {metric}_{bgt|fct|act}
@@ -348,7 +371,9 @@ rms_act
 rev_act
 ```
 
-### Pace Metrics
+
+
+## Pace Metrics
 
 ```text
 {metric}_pace_{period}
@@ -363,7 +388,9 @@ adr_pace_stly
 revpar_pace_stly
 ```
 
-### Ranking Metrics
+
+
+## Ranking Metrics
 
 ```text
 {metric}_rank
@@ -371,7 +398,17 @@ revpar_pace_stly
 cs_{metric}_rank
 ```
 
-### Change Metrics
+Examples:
+
+```text
+adr_rank
+revpar_rank
+cs_adr_rank
+```
+
+
+
+## Change Metrics
 
 ```text
 {metric}_chg
@@ -391,12 +428,12 @@ adr_index_pct_chg_ly
 rev_chg_ly_030
 ```
 
----
 
-## Required Common Columns
+
+# Required Common Columns
 
 | Column | Purpose |
-| --- | --- |
+|---|---|
 | `property_code` | Property-level reporting alignment |
 | `date` | Daily reporting grain |
 | `snap_date` | Snapshot reporting context |
@@ -404,16 +441,20 @@ rev_chg_ly_030
 | `insert_date` | Data ingestion timestamp |
 | `updated_date` | Record update timestamp |
 
----
+These fields establish baseline reporting consistency across fact, dimension, snapshot, and reporting layers.
 
-## Warehouse Philosophy
+
+
+# Warehouse Philosophy
 
 The warehouse naming standard exists to create a reporting environment where:
-
 - metrics group together logically,
 - schemas remain predictable,
 - dashboards remain stable,
 - documentation stays aligned,
 - and automation workflows can infer semantic meaning directly from structure.
 
-**The objective is not shorter column names. The objective is operational clarity at scale.**
+**The objective is not shorter column names., the objective is operational clarity at scale.**
+
+
+
