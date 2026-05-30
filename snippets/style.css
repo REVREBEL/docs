@@ -764,6 +764,9 @@ code {
     border-radius: 0 !important;
 }
 
+.justify-center {
+  justify-content: start !important;
+}
 
 .max-w-xl {
   max-width: 46rem !important;
