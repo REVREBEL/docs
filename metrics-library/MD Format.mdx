@@ -1,15 +1,16 @@
+---
+title: "MDX format reference"
+description: "Allowed HTML/MDX tag examples"
+---
+
 > Test Blockquote
 
+The following HTML tags are supported inside MDX. Each tag must be properly closed (e.g. `<br />`, not `<br>`).
 
-
-<details> & <summary>: Create collapsible toggles.
-
-
-<sub> For subscripts.
-
-<sup>: For superscripts.
-
-<kbd>: For keyboard shortcuts (renders as a little button).
-
-
-<table>: For more advanced table formatting than standard Markdown pipes.
+```html
+<details> & <summary>   // Create collapsible toggles
+<sub>                   // Subscripts
+<sup>                   // Superscripts
+<kbd>                   // Keyboard shortcuts (renders as a little button)
+<table>                 // Advanced table formatting beyond Markdown pipes
+```
