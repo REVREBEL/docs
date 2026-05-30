@@ -765,6 +765,9 @@ code {
 }
 
 
+.max-w-xl {
+  max-width: 46rem !important;
+}
 
 /* =========================================================
    FINAL OVERRIDES: Code block + Shiki + copy icon
